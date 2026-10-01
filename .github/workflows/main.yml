@@ -5,12 +5,16 @@ on:
     branches:
       - main
 
+# Declarar los permisos necesarios para que el workflow reutilizable pueda ejecutarlos
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 jobs:
   Llamar-Pipeline-Corporativo:
-    # Llama al Reusable Workflow
     uses: ./.github/workflows/reusable-pipeline.yml
     with:
-      # Pega aquí el nombre de la Web App que se generó en Azure (ej. interbank-app-12345)
-      app_name: 'REEMPLAZAR_POR_NOMBRE_WEB_APP' 
+      app_name: 'interbank-app-18699'
     secrets:
       PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
