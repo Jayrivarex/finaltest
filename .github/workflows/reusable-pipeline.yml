@@ -37,7 +37,7 @@ jobs:
         uses: github/codeql-action/analyze@v3
 
       - name: Empaquetar Artefacto
-        run: zip -r app.zip ./* index.js
+        run: zip -r app.zip .
 
       - name: Subir Artefacto
         uses: actions/upload-artifact@v4
