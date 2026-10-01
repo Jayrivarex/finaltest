@@ -1,0 +1,16 @@
+name: 'Setup Node.js Environment'
+description: 'Instala Node, configura caché y prepara el entorno'
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        
+    - name: Instalar dependencias base
+      shell: bash
+      run: |
+        echo "Simulando instalación de dependencias bancarias..."
+        npm init -y
+        npm install express

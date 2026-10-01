@@ -1,0 +1,61 @@
+name: Estandar Reusable DevSecOps
+
+on:
+  workflow_call:
+    inputs:
+      app_name:
+        required: true
+        type: string
+    secrets:
+      PUBLISH_PROFILE:
+        required: true
+
+jobs:
+  Build-And-Scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write # Permiso necesario para GHAS / CodeQL
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Llamar a Composite Action
+        uses: ./.github/actions/setup-node-env
+
+      # Inicializar GitHub Advanced Security (CodeQL)
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'javascript'
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript"
+
+      - name: Empaquetar Artefacto
+        run: zip -r app.zip ./*
+
+      - name: Subir Artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: webapp-artifact
+          path: app.zip
+
+  Deploy-To-Azure:
+    needs: Build-And-Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar Artefacto
+        uses: actions/download-artifact@v4
+        with:
+          name: webapp-artifact
+
+      - name: Despliegue en Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ inputs.app_name }}
+          publish-profile: ${{ secrets.PUBLISH_PROFILE }}
+          package: app.zip

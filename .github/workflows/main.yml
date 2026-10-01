@@ -1,0 +1,16 @@
+name: Despliegue Produccion Interbank
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Llamar-Pipeline-Corporativo:
+    # Llama al Reusable Workflow
+    uses: ./.github/workflows/reusable-pipeline.yml
+    with:
+      # Pega aquí el nombre de la Web App que se generó en Azure (ej. interbank-app-12345)
+      app_name: 'REEMPLAZAR_POR_NOMBRE_WEB_APP' 
+    secrets:
+      PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
